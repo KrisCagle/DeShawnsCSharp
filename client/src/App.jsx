@@ -9,11 +9,16 @@ function App() {
     <div className="App">
       <>
         <Navbar color="light" expand="md">
-          <Nav navbar>
-            <NavbarBrand href="/">🐕‍🦺 🐩 DeShawn's Dog Walking</NavbarBrand>
+          <NavbarBrand href="/">🐕‍🦺 🐩 DeShawn's Dog Walking</NavbarBrand>
+          <Nav className="ms-auto" navbar>
+            <NavItem>
+              <NavLink href="/">Dogs</NavLink>
+            </NavItem>
             <NavItem>
               <NavLink href="/walkers">Walkers</NavLink>
-              <NavLink href="/dogs">Dogs</NavLink>
+            </NavItem>
+            <NavItem>
+              <NavLink href="/cities">Cities</NavLink>
             </NavItem>
           </Nav>
         </Navbar>
