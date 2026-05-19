@@ -146,5 +146,30 @@ app.MapGet("/api/hello", () =>
     return new { Message = "Welcome to DeShawn's Dog Walking" };
 });
 
+app.MapGet("/api/dogs", () =>
+{
+    return dogs.Select(d => new DogDTO
+    {
+        Id = d.Id,
+        Name = d.Name,
+        CityId = d.CityId,
+        WalkerId = d.WalkerId,
+    });
+});
+
+
+
+
+// app.MapGet("/Wheels/{id}", (int id) =>
+// {
+//     Wheels wheel = wheels.FirstOrDefault(w => w.Id == id);
+//     if (wheel == null)
+//     {
+//         return Results.NotFound();
+//     }
+//     return Results.Ok(wheel);
+// });
+
+
 
 app.Run();
