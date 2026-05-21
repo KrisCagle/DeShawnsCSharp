@@ -8,5 +8,7 @@ public class DogDTO
     public int? CityId { get; set; }
 
     public int? WalkerId { get; set; }
+    public string CityName {get; set; }
+    public string WalkerName {get; set; }
 
 }

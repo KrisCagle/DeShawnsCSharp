@@ -154,22 +154,55 @@ app.MapGet("/api/dogs", () =>
         Name = d.Name,
         CityId = d.CityId,
         WalkerId = d.WalkerId,
+        CityName = cities.FirstOrDefault(c => c.Id == d.CityId)?.Name,
+        WalkerName = walkers.FirstOrDefault(w => w.Id == d.WalkerId)?.Name,
     });
 });
 
 
+app.MapGet("/api/dogs/{dog.Id}", (int id) =>    
+ {
+    Dog dog = dogs.FirstOrDefault(d => d.Id == id);
+    if (dog == null)
+    {
+        return Results.NotFound();
+    }
+    return Results.Ok(new DogDTO
+    {
+        Id = dog.Id,
+        Name = dog.Name,
+        CityId = dog.CityId,
+        WalkerId = dog.WalkerId,
+        CityName = cities.FirstOrDefault(c => c.Id == dog.CityId)?.Name,
+        WalkerName = walkers.FirstOrDefault(w => w.Id == dog.WalkerId)?.Name,
+        
+    });
+ }
+);
+
+app.MapPost("/api/dogs", (Dog dog) =>
+{
+
+dog.Id = dogs.Any() ? dogs.Max (d => d.Id) + 1 : 1;
+dogs.Add(dog);
+ 
+return Results.Created($"/api/dogs/{dog.Id}", new DogDTO
+{
+Id = dog.Id,
+Name = dog.Name,
+CityId = dog.CityId,
+});
+});
 
 
-// app.MapGet("/Wheels/{id}", (int id) =>
-// {
-//     Wheels wheel = wheels.FirstOrDefault(w => w.Id == id);
-//     if (wheel == null)
-//     {
-//         return Results.NotFound();
-//     }
-//     return Results.Ok(wheel);
-// });
-
+app.MapGet("/api/cities", () =>
+{
+    return cities.Select(c => new CityDTO
+    {
+        Id = c.Id,
+        Name = c.Name
+    });
+});
 
 
 app.Run();
