@@ -37,6 +37,18 @@ List<Dog> dogs = new List<Dog>
         Name = "Luna",
         CityId = 8,
         WalkerId = 1,
+    },
+    new Dog()
+    {
+        Id = 6,
+        Name = "Big Bubba",
+        CityId = 8,
+    },
+    new Dog()
+    {
+        Id = 7,
+        Name = "Terrance",
+        CityId = 3,
     }
 };
 
@@ -119,7 +131,57 @@ List<Walker> walkers = new List<Walker>
     }
 };
 
-List<WalkerCity> walkerCity = new List<WalkerCity> {};
+List<WalkerCity> walkerCity = new List<WalkerCity>
+{
+    new WalkerCity()
+    {
+        Id = 1,
+        CityId = 1,
+        WalkerId = 1,
+    },
+    new WalkerCity()
+    {
+        Id = 2,
+        CityId = 2,
+        WalkerId = 2,
+    },
+    new WalkerCity()
+    {
+        Id = 3,
+        CityId = 3,
+        WalkerId = 3,
+    },
+    new WalkerCity()
+    {
+        Id = 4,
+        CityId = 4,
+        WalkerId = 4,
+    },
+    new WalkerCity()
+    {
+        Id = 5,
+        CityId = 5,
+        WalkerId = 5,
+    },
+    new WalkerCity()
+    {
+        Id = 6,
+        CityId = 2,
+        WalkerId = 1,
+    },
+    new WalkerCity()
+    {
+        Id = 7,
+        CityId = 6,
+        WalkerId = 2,
+    },
+    new WalkerCity()
+    {
+        Id = 8,
+        CityId = 8,
+        WalkerId = 3,
+    },
+};
 
 
 
@@ -146,23 +208,32 @@ app.MapGet("/api/hello", () =>
     return new { Message = "Welcome to DeShawn's Dog Walking" };
 });
 
+
 app.MapGet("/api/dogs", () =>
 {
-    return dogs.Select(d => new DogDTO
+    return dogs.Select(dog => new DogDTO
     {
-        Id = d.Id,
-        Name = d.Name,
-        CityId = d.CityId,
-        WalkerId = d.WalkerId,
-        CityName = cities.FirstOrDefault(c => c.Id == d.CityId)?.Name,
-        WalkerName = walkers.FirstOrDefault(w => w.Id == d.WalkerId)?.Name,
+        Id = dog.Id,
+        Name = dog.Name,
+        CityId = dog.CityId,
+        WalkerId = dog.WalkerId,
+        City = cities.FirstOrDefault(c => c.Id == dog.CityId) == null ? null : new CityDTO
+        {
+            Id = cities.First(c => c.Id == dog.CityId).Id,
+            Name = cities.First(c => c.Id == dog.CityId).Name,
+        },
+        Walker = dog.WalkerId == null ? null : new WalkerDTO
+        {
+          Id = walkers.First(w => w.Id == dog.WalkerId).Id,
+          Name = walkers.First(w => w.Id == dog.WalkerId).Name  
+        }
     });
 });
 
 
-app.MapGet("/api/dogs/{dog.Id}", (int id) =>    
+app.MapGet("/api/dogs/{id}", (int id) =>    
  {
-    Dog dog = dogs.FirstOrDefault(d => d.Id == id);
+    Dog dog = dogs.FirstOrDefault(dog => dog.Id == id);
     if (dog == null)
     {
         return Results.NotFound();
@@ -173,17 +244,25 @@ app.MapGet("/api/dogs/{dog.Id}", (int id) =>
         Name = dog.Name,
         CityId = dog.CityId,
         WalkerId = dog.WalkerId,
-        CityName = cities.FirstOrDefault(c => c.Id == dog.CityId)?.Name,
-        WalkerName = walkers.FirstOrDefault(w => w.Id == dog.WalkerId)?.Name,
+        City = cities.FirstOrDefault(c => c.Id == dog.CityId) == null ? null : new CityDTO
+        {
+            Id = cities.First(c => c.Id == dog.CityId).Id,
+            Name = cities.First(c => c.Id == dog.CityId).Name,
+        },
+        Walker = dog.WalkerId == null ? null : new WalkerDTO
+        {
+          Id = walkers.First(w => w.Id == dog.WalkerId).Id,
+          Name = walkers.First(w => w.Id == dog.WalkerId).Name  
+        }
         
     });
  }
 );
 
-app.MapPost("/api/dogs", (Dog dog) =>
+ app.MapPost("/api/dogs", (Dog dog) =>
 {
 
-dog.Id = dogs.Any() ? dogs.Max (d => d.Id) + 1 : 1;
+dog.Id = dogs.Any() ? dogs.Max (dog => dog.Id) + 1 : 1;
 dogs.Add(dog);
  
 return Results.Created($"/api/dogs/{dog.Id}", new DogDTO
@@ -191,6 +270,7 @@ return Results.Created($"/api/dogs/{dog.Id}", new DogDTO
 Id = dog.Id,
 Name = dog.Name,
 CityId = dog.CityId,
+WalkerId = dog.WalkerId
 });
 });
 
@@ -202,6 +282,66 @@ app.MapGet("/api/cities", () =>
         Id = c.Id,
         Name = c.Name
     });
+});
+
+app.MapGet("/api/walkers", () => {
+    return walkers.Select(w => new WalkerDTO
+    {
+        Id = w.Id,
+        Name = w.Name,
+        Cities = walkerCity
+            .Where(wc => wc.WalkerId == w.Id)
+            .Select(wc => new CityDTO
+            {
+                Id = cities.First(c => c.Id == wc.CityId).Id,
+                Name = cities.First(c => c.Id == wc.CityId).Name
+            })
+            .ToList()
+    });
+});
+app.MapPost("/api/cities", (City city) =>
+{
+    city.Id = cities.Any() ? cities.Max(c => c.Id) + 1 : 1;
+    cities.Add(city);
+    return Results.Created($"/api/cities/{city.Id}", new CityDTO
+    {
+        Id = city.Id,
+        Name = city.Name
+    });
+});
+
+
+app.MapPut("/api/dogs/{id}", (int id, Dog updatedDog) =>{
+Dog dog = dogs.FirstOrDefault(d => d.Id == id);
+if (dog == null)
+{
+   return Results.NotFound();
+}
+dog.WalkerId = updatedDog.WalkerId;
+return Results.NoContent();
+});
+
+app.MapGet("/api/walkers/{id}", (int id) =>
+{
+    Walker walker = walkers.FirstOrDefault(walker => walker.Id == id);
+    if (walker == null)
+    {
+        return Results.NotFound();
+    }
+    
+    return Results.Ok(new WalkerDTO
+{
+    Id = walker.Id,
+    Name = walker.Name,
+    Cities = walkerCity
+        .Where(wc => wc.WalkerId == walker.Id)
+        .Select(wc => new CityDTO
+        {
+            Id = cities.First(c => c.Id == wc.CityId).Id,
+            Name = cities.First(c => c.Id == wc.CityId).Name
+        })
+        .ToList()
+});
 });
 
 

@@ -14,7 +14,9 @@ export const getWalkers = () => {
 export const getDogById = (id) => {
   return fetch(`/api/dogs/${id}`).then((res) => res.json());
 };
-
+export const getWalkerById = (id) => {
+  return fetch(`/api/walkers/${id}`).then((res) => res.json());
+}
 export const createDog = (dog) => {
 return fetch(`/api/dogs`, {
   method: "POST",
@@ -25,4 +27,12 @@ return fetch(`/api/dogs`, {
 
 export const getCities = () => {
   return fetch("/api/cities").then((res) => res.json());
+};
+
+export const assignDogToWalker = (id, dog) => {
+  return fetch(`/api/dogs/${id}`, {
+    method: "PUT",
+    headers: {"Content-Type" : "application/json" },
+    body: JSON.stringify(dog),
+  })
 };
