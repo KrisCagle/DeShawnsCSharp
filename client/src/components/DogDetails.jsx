@@ -21,8 +21,8 @@ export const DogDetails = () => {
     return (
         <div>
             <h2>{dogDetails.name}</h2>
-            <p>City: {dogDetails.cityName}</p>
-            <p>Walker: {dogDetails.walkerName}</p>
+            <p>City: {dogDetails.city?.name}</p>
+            <p>Walker: {dogDetails.walker ? dogDetails.walker.name : "No Walker Selected"}</p>
         </div>
     )
 }

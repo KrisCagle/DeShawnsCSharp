@@ -1,4 +1,4 @@
-import { getDogs } from "../apiManager.js"
+import { getDogs, createDog } from "../apiManager.js"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom";
 
@@ -14,25 +14,22 @@ useEffect(() => {
 }, [])
 
 return (
-    
-    <div className="dogs">
-        {allDogs.map((dog) => (
-    <div>
-        <div className="dog-info" key={dog.id}>
-            <h5 className="dog-name">
-                <Link to = {`/DogDetails/${dog.id}`}>
-                {dog.name}
-                </Link>
-            </h5>
+  <div className="dogs">
+    {allDogs.map((dog) => (
+      <div key={dog.id}>
+        <h5 className="dog-name">
+          <Link to={`/dogs/${dog.id}`}>{dog.name}</Link>
+        </h5>
+        <div>Location: {dog.city?.name}</div>
+        <div>
+          Current Walker:{" "}
+          {dog.walker ? dog.walker.name : "No walker assigned to this dog"}
         </div>
-                <div>
-                Location: {dog.cityName}
-                </div> 
-                <div>
-                Current Walker: {dog.walkerName}
-                </div>
-    </div>
+      </div>
     ))}
-    </div>
-  )
-};
+    <Link to="/dogs/Add">
+    <button>Add Dog</button>
+    </Link>
+  </div>
+);
+}; 
