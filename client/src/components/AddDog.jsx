@@ -21,7 +21,7 @@ export const AddDog = () =>
             });
         };
 
-        return (
+        return(
             <div>
                 <h2>
                     Add a Dog:

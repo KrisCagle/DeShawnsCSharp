@@ -1,4 +1,4 @@
-import { getCities, getWalkers } from "../apiManager.js"
+import { deleteWalker, getCities, getWalkers } from "../apiManager.js"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom";
 
@@ -41,6 +41,11 @@ return (
         <Link to={`/walkers/${walker.id}/assign`}>
         <button>Add Dog</button>
       </Link>
+      <button onClick={()=> {
+          deleteWalker(walker.id).then(() => {
+            getWalkers().then(setWalker)
+          })
+        }}>Delete Walker</button>
         </div>
       ))}
     </div>

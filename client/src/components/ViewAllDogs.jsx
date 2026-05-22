@@ -1,4 +1,4 @@
-import { getDogs, createDog } from "../apiManager.js"
+import { getDogs, createDog, deleteDog } from "../apiManager.js"
 import { useEffect, useState } from "react"
 import { Link } from "react-router-dom";
 
@@ -25,6 +25,12 @@ return (
           Current Walker:{" "}
           {dog.walker ? dog.walker.name : "No walker assigned to this dog"}
         </div>
+        <button onClick={() => {
+    deleteDog(dog.id).then(() => {
+        getDogs().then(setAllDogs)
+    })
+}}
+>Delete</button>
       </div>
     ))}
     <Link to="/dogs/Add">

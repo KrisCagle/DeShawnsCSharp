@@ -36,3 +36,31 @@ export const assignDogToWalker = (id, dog) => {
     body: JSON.stringify(dog),
   })
 };
+
+export const createCity = (city) => {
+return fetch(`/api/cities`, {
+  method: "POST",
+  headers: { "Content-Type" : "application/json" },
+  body: JSON.stringify(city), 
+}).then((res) => res.json())
+};
+
+export const updateWalkerCities = (id, cityIds) => {
+  return fetch(`/api/walkers/${id}/cities`, {
+    method: "PUT",
+    headers: {"Content-Type" : "application/json" },
+    body: JSON.stringify(cityIds)
+  })
+}
+
+export const deleteDog = (id) => {
+  return fetch(`/api/dogs/${id}`, {
+    method: "DELETE"
+  })
+}
+
+export const deleteWalker = (id) => {
+  return fetch(`/api/walkers/${id}`, {
+    method: "DELETE"
+  })
+}

@@ -111,6 +111,11 @@ List<Walker> walkers = new List<Walker>
     },
     new Walker()
     {
+        Id = 7,
+        Name = "Doo Doo Boy"
+    },
+    new Walker()
+    {
         Id = 2,
         Name = "Jesse Asa"
     },
@@ -345,4 +350,46 @@ app.MapGet("/api/walkers/{id}", (int id) =>
 });
 
 
+app.MapPut("/api/walkers/{id}/cities", (int id, List<int> cityIds) =>
+{
+    Walker walker = walkers.FirstOrDefault(w => w.Id == id);
+    if (walker == null)
+    {
+        return Results.NotFound();
+    }
+    walkerCity.RemoveAll(wc => wc.WalkerId == id);
+    foreach (int cityId in cityIds)
+    {
+        walkerCity.Add(new WalkerCity
+        {
+            WalkerId = id,
+            CityId = cityId
+        });
+    }
+    return Results.NoContent();
+});
+
+app.MapDelete("/api/dogs/{id}", (int id) =>
+{
+ Dog dog = dogs.FirstOrDefault(d => d.Id == id);
+ if (dog == null) return Results.NotFound();
+ dogs.Remove(dog);
+ return Results.NoContent();   
+});
+
+
+app.MapDelete("/api/walkers/{id}", (int id) =>
+{
+    Walker walker = walkers.FirstOrDefault(w => w.Id == id);
+    if (walker == null) return Results.NotFound();
+    walkers.Remove(walker);
+    foreach (var dog in dogs.Where(d =>d.WalkerId == id))
+    {
+        dog.WalkerId = null;
+    }
+    return Results.NoContent();
+});
 app.Run();
+
+
+
